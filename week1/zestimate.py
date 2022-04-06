@@ -13,23 +13,27 @@ pd.set_option('display.max_columns', None)
 
 housing_data =  pd.read_csv('https://raw.githubusercontent.com/cjflanagan/cs68/master/housing.csv')
 
-housing_data = pd.get_dummies(housing_data, columns=['SaleCondition','LotShape','GarageType'], drop_first=True)
+housing_data = pd.get_dummies(housing_data, columns=['SaleCondition','GarageType'], drop_first=True)
 
 # try to sum up bathrooms in an off-the-cuff-formula
-housing_data['BathComps'] = housing_data['FullBath'] + ( housing_data['HalfBath'] * .33 ) + (housing_data['BsmtHalfBath'] * .25)
+housing_data['BathComps'] = housing_data['FullBath'] + ( housing_data['HalfBath'] * .5 ) + (housing_data['BsmtHalfBath'] * .33) + (housing_data['BsmtFullBath'] * .66)
+housing_data['HasGarage'] = housing_data['GarageType_Attchd'] + housing_data['GarageType_Basment'] + housing_data['GarageType_BuiltIn'] + housing_data['GarageType_BuiltIn'] + housing_data['GarageType_CarPort'] + housing_data['GarageType_Detchd']
+
+housing_data['AgeWhenSold'] = housing_data['YrSold'] - housing_data['YearBuilt']
+
 
 # Data description available here: https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data?select=data_description.txt
-# housing_data.head()
+# print(housing_data.head())
 
-housing_data.shape
+# housing_data.shape
 
-sns.scatterplot(y='SalePrice', x='LotArea', data=housing_data)
+# sns.scatterplot(y='SalePrice', x='LotArea', data=housing_data)
 
-sns.lmplot(y='SalePrice', x='LotArea', data=housing_data)
+# sns.lmplot(y='SalePrice', x='LotArea', data=housing_data)
 
 y = housing_data['SalePrice']
 
-X = housing_data[['LotArea', 'BedroomAbvGr', 'OverallQual','OverallCond','GarageType_Attchd','GarageType_Detchd','YearBuilt','GrLivArea','BathComps']]
+X = housing_data[['LotArea', 'OverallQual','OverallCond','AgeWhenSold','GrLivArea','BathComps','GarageCars']]
 
 X = sm.add_constant(X)
 
